@@ -17,7 +17,6 @@
         <div class="btn">Read more</div>
     </a>
 </div>
-<Footer/>
 
 <style>
     .home_hero {
