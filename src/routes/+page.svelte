@@ -1,15 +1,12 @@
 <!-- src/routes/+page.svelte -->
-<!-- src/routes/+page.svelte -->
 <script>
-    import Navbar from '../lib/Navbar.svelte';
-    import '../styles.css';
+    import '../styles/styles.css';
     import {WebMidi} from "webmidi";
     console.log(WebMidi)
     WebMidi.enable()
 
 </script>
 
-<Navbar />
 <div class="home_hero">
     <h1>Enjoy Static Site Hosting With TESTTTTTTTETETETETETETET.</h1>
     <p>Fast, Secure, Reliable Hosting Solution.</p>
