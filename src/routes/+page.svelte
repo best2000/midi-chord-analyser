@@ -11,7 +11,7 @@
 
 <Navbar />
 <div class="home_hero">
-    <h1>Enjoy Static Site Hosting With Kinsta.</h1>
+    <h1>Enjoy Static Site Hosting With TESTTTTTTTETETETETETETET.</h1>
     <p>Fast, Secure, Reliable Hosting Solution.</p>
     <a href="https://kinsta.com/static-site-hosting">
         <div class="btn">Read more</div>
