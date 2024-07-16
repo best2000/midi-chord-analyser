@@ -3,45 +3,79 @@
     import "../styles/styles.css";
     import { WebMidi } from "webmidi";
 
-    let log = "";
-    $: console.log("log: " + log);
+    let log = ""
     let midiInputs = [];
     let selectedMidiInput = "";
     $: console.log("selectedMidiInput: " + selectedMidiInput);
 
     function listenMidiInput() {
+        //listen to all midi channels
         const midiInput = WebMidi.getInputByName(selectedMidiInput);
         midiInput.addListener("noteon", (e) => {
-            console.log(e.note.identifier);
-            log += e.note.identifier+"\n"
+            let message = `note on: ${e.note.name}${e.note.octave} ${e.note.number}`
+            console.log(message);
+            log += message+"\n"
+            let logTextArea = document.getElementById("log")
+            if(logTextArea.selectionStart == logTextArea.selectionEnd) {
+                logTextArea.scrollTop = logTextArea.scrollHeight;
+            }
+
+        });
+        midiInput.addListener("noteoff", (e) => {
+            let message = `note on: ${e.note.name}${e.note.octave} ${e.note.number}`
+            console.log(message);
+            log += message+"\n"
+            let logTextArea = document.getElementById("log")
+            if(logTextArea.selectionStart == logTextArea.selectionEnd) {
+                logTextArea.scrollTop = logTextArea.scrollHeight;
+            }
+        });
+        midiInput.addListener("controlchange", (e) => {
+            if (e.subtype == "damperpedal") {
+                if (e.value) {
+                    let message = `pedal on`
+                    console.log(message);
+                    log += message+"\n"
+                } else {
+                    let message = `pedal off`
+                    console.log(message);
+                    log += message+"\n"
+                }
+                let logTextArea = document.getElementById("log")
+                if(logTextArea.selectionStart == logTextArea.selectionEnd) {
+                    logTextArea.scrollTop = logTextArea.scrollHeight;
+                }
+            }
         });
     }
-    
-    function clear() {
-        log = "";
-    }
+
     function updateMidiInputs() {
         midiInputs = WebMidi.inputs;
-        // console.log("midi inputs: " + WebMidi.inputs.length);
-        // WebMidi.inputs.forEach((input) => {
-        //     console.log(input.manufacturer, input.name);
-        // });
+        console.log("midi inputs: " + WebMidi.inputs.length);
+        WebMidi.inputs.forEach((input) => {
+            console.log(input.manufacturer, input.name);
+        });
+    }
+
+    function clear() {
+        log=""
     }
 
     WebMidi.enable()
         .then(onEnabled)
         .catch((err) => (log += err));
 
-    // Function triggered when WEBMIDI.js is ready
     function onEnabled() {
         // Inputs
         console.log("midi inputs: " + WebMidi.inputs.length);
         midiInputs = WebMidi.inputs;
         if (midiInputs.length != 0) {
-            selectedMidiInput = midiInputs[0].name
-            listenMidiInput()
+            selectedMidiInput = midiInputs[0].name;
+            listenMidiInput();
         }
     }
+
+    
 </script>
 
 <div>
@@ -59,10 +93,9 @@
     {/each}
 </select>
 <button on:focus={clear}>clear</button>
-<textarea style="width: 100%; height:200px; font-size:xx-small">
+<textarea id="log" style="width: 100%; height:200px; font-size:xx-small">
 {log}
 </textarea>
-
 <!-- This keyboard has following properties (x=octave width).
      1. All white keys have equal width in front (W=x/7).
      2. All black keys have equal width (B=x/12).
