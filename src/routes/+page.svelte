@@ -2,9 +2,11 @@
     import { onMount } from 'svelte';
     import '../styles/styles.css';
     import {WebMidi} from "webmidi";
+
+    let log = ""
     
     // onMount(()=>{
-        alert("test")
+        // alert("test")
     // })
 
     // Enable WEBMIDI.js and trigger the onEnabled() function when ready
@@ -19,12 +21,18 @@
         // Display available MIDI input devices
         if (WebMidi.inputs.length < 1) {
         console.log("No device detected.");
+        log+="No device detected"
         } else {
         WebMidi.inputs.forEach((device, index) => {
             console.log(`WebMidi.inputs[${index}]: ${device.name}`);
+            log+=`WebMidi.inputs[${index}]: ${device.name}`
         });
         }
 
+    }
+
+    function clear() {
+        log=""
     }
 
 </script>
@@ -32,6 +40,11 @@
 <div class="home_hero">
     <h1>MIDI Chord Analyser</h1>
 </div>
+
+<button on:click={clear}>clear</button>
+<textarea style="width: 100%; height:200px; font-size:xx-small">
+{log}
+</textarea>
 
 <!-- This keyboard has following properties (x=octave width).
      1. All white keys have equal width in front (W=x/7).
