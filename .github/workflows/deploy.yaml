@@ -28,7 +28,7 @@ jobs:
 
       - name: build
         env:
-          BASE_PATH: '/midi-chord-analyser'
+          BASE_PATH: '/midi-chord-analyser/build'
         run: |
           npm run build
 
