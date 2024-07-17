@@ -1,48 +1,72 @@
 <script>
-    import { onMount } from "svelte";
-    import "../styles/styles.css";
+    import "../styles.css";
     import { WebMidi } from "webmidi";
 
-    let log = ""
+    let log = "";
     let midiInputs = [];
     let selectedMidiInput = "";
-    $: console.log("selectedMidiInput: " + selectedMidiInput);
+
+    WebMidi.enable()
+        .then(onEnabled)
+        .catch((err) => (log += err));
+
+    function onEnabled() {
+        console.log("midi inputs: " + WebMidi.inputs.length);
+        midiInputs = WebMidi.inputs;
+        if (midiInputs.length != 0) {
+            selectedMidiInput = midiInputs[0].name;
+            listenMidiInput();
+        }
+    }
 
     function listenMidiInput() {
         //listen to all midi channels
         const midiInput = WebMidi.getInputByName(selectedMidiInput);
         midiInput.addListener("noteon", (e) => {
-            let message = `note on: ${e.note.name}${e.note.octave} ${e.note.number}`
+            document.getElementById(e.note.name+e.note.number).style["fill"] = "red"
+
+            let message = `note on: ${e.note.name}${e.note.octave} ${e.note.number}`;
             console.log(message);
-            log += message+"\n"
-            let logTextArea = document.getElementById("log")
-            if(logTextArea.selectionStart == logTextArea.selectionEnd) {
+            log += message + "\n";
+
+            let logTextArea = document.getElementById("log");
+            if (logTextArea.selectionStart == logTextArea.selectionEnd) {
                 logTextArea.scrollTop = logTextArea.scrollHeight;
             }
-
         });
         midiInput.addListener("noteoff", (e) => {
-            let message = `note on: ${e.note.name}${e.note.octave} ${e.note.number}`
+            let key = document.getElementById(e.note.name+e.note.number)
+            console.log(key.className.baseVal)
+            if (key.className.baseVal == "white-key") {
+                key.style["fill"] = "white"
+            }
+            else {
+                key.style["fill"] = "black"
+            } 
+                            
+            let message = `note on: ${e.note.name}${e.note.octave} ${e.note.number}`;
             console.log(message);
-            log += message+"\n"
-            let logTextArea = document.getElementById("log")
-            if(logTextArea.selectionStart == logTextArea.selectionEnd) {
+            log += message + "\n";
+
+            let logTextArea = document.getElementById("log");
+            if (logTextArea.selectionStart == logTextArea.selectionEnd) {
                 logTextArea.scrollTop = logTextArea.scrollHeight;
             }
         });
         midiInput.addListener("controlchange", (e) => {
             if (e.subtype == "damperpedal") {
                 if (e.value) {
-                    let message = `pedal on`
+                    let message = `pedal on`;
                     console.log(message);
-                    log += message+"\n"
+                    log += message + "\n";
                 } else {
-                    let message = `pedal off`
+                    let message = `pedal off`;
                     console.log(message);
-                    log += message+"\n"
+                    log += message + "\n";
                 }
-                let logTextArea = document.getElementById("log")
-                if(logTextArea.selectionStart == logTextArea.selectionEnd) {
+                
+                let logTextArea = document.getElementById("log");
+                if (logTextArea.selectionStart == logTextArea.selectionEnd) {
                     logTextArea.scrollTop = logTextArea.scrollHeight;
                 }
             }
@@ -56,25 +80,6 @@
             console.log(input.manufacturer, input.name);
         });
     }
-
-    function clear() {
-        log=""
-    }
-
-    WebMidi.enable()
-        .then(onEnabled)
-        .catch((err) => (log += err));
-
-    function onEnabled() {
-        // Inputs
-        console.log("midi inputs: " + WebMidi.inputs.length);
-        midiInputs = WebMidi.inputs;
-        if (midiInputs.length != 0) {
-            selectedMidiInput = midiInputs[0].name;
-            listenMidiInput();
-        }
-    }
-
     
 </script>
 
@@ -92,32 +97,30 @@
         <option>{input.name}</option>
     {/each}
 </select>
-<button on:focus={clear}>clear</button>
+<button on:focus={log = ""}>clear</button>
 <textarea id="log" style="width: 100%; height:200px; font-size:xx-small">
-{log}
+    {log}
 </textarea>
 <!-- This keyboard has following properties (x=octave width).
      1. All white keys have equal width in front (W=x/7).
      2. All black keys have equal width (B=x/12).
      3. The narrow part of white keys C, D and E is W - B*2/3
      4. The narrow part of white keys F, G, A, and B is W - B*3/4 -->
-<svg xml:space="preserve" width="100%" height="120">
-    <!--  White keys   -->
-    <rect class="white-key" x="0" y="0" width="20" height="120" />
-    <rect class="white-key" x="20" y="0" width="20" height="120" />
-    <rect class="white-key" x="40" y="0" width="20" height="120" />
-    <rect class="white-key" x="60" y="0" width="20" height="120" />
-    <rect class="white-key" x="80" y="0" width="20" height="120" />
-    <rect class="white-key" x="100" y="0" width="20" height="120" />
-    <rect class="white-key" x="120" y="0" width="20" height="120" />
-    <rect class="white-key" x="140" y="0" width="20" height="120" />
-    <rect class="white-key" x="160" y="0" width="20" height="120" />
-    <rect class="white-key" x="180" y="0" width="20" height="120" />
-    <rect class="white-key" x="200" y="0" width="20" height="120" />
-    <!--  Black keys (overlap with the white keys)  -->
-    <rect style="black-key" x="12.5" y="0" width="15" height="80" />
-    <rect style="black-key" x="41.66666" y="0" width="13" height="80" />
-    <rect style="black-key" x="82.25" y="0" width="13" height="80" />
-    <rect style="black-key" x="108.25" y="0" width="13" height="80" />
-    <rect style="black-key" x="134.75" y="0" width="13" height="80" />
-</svg>
+     <svg xml:space="preserve" width="100%" height="125">
+        <!--  White keys   -->
+        <rect id="C60" class="white-key"  x="0" y="0" width="23" height="120"/>
+        <rect id="D62" class="white-key"  x="23" y="0" width="23" height="120"/>
+        <rect id="E64" class="white-key"  x="46" y="0" width="23" height="120"/>
+        <rect id="F65" class="white-key"  x="69" y="0" width="23" height="120"/>
+        <rect id="G67" class="white-key"  x="92" y="0" width="23" height="120"/>
+        <rect id="A69" class="white-key"  x="115" y="0" width="23" height="120"/>
+        <rect id="B71" class="white-key"  x="138" y="0" width="23" height="120"/>
+        <!--  Black keys (overlap with the white keys)  -->
+        <rect id="C61" class="black-key"  x="14.33333" y="0" width="13" height="80"/>
+        <rect id="D63" class="black-key"  x="41.66666" y="0" width="13" height="80"/>
+        <rect id="F66" class="black-key"  x="82.25" y="0" width="13" height="80"/>
+        <rect id="G68" class="black-key"  x="108.25" y="0" width="13" height="80"/>
+        <rect id="A70" class="black-key"  x="134.75" y="0" width="13" height="80"/>
+    </svg>
+
+
