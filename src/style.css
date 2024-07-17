@@ -29,7 +29,7 @@
 }
  
 .piano-keys {
-    width: 4rem;
+    width: 3rem;
     /* cursor: pointer; */
     position: relative;
     height: 15rem;
@@ -42,12 +42,12 @@
 }
  
 .black-key {
-    width: 2rem; /*2rem*/
+    width: 1.7rem; /*2rem*/
     height: 9.75rem;
     /* border-radius: 5px; */
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     background-color: black;
     z-index: 2;
-    margin: 0 -20px 0 -20px; /*0 -20px 0 -20px*/
+    margin: 0 -16px 0 -16px; /*0 -20px 0 -20px*/
 }

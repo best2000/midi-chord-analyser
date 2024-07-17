@@ -1,5 +1,5 @@
 <script>
-    import "../styles.css";
+    import "../style.css";
     import { WebMidi } from "webmidi";
     import { Midi, Interval, Chord } from "tonal";
 
