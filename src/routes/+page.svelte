@@ -124,9 +124,11 @@
     {/each}
 </select>
 <button on:focus={clear}>clear</button>
+<br/>
 <textarea id="log" style="width: 200px; height:200px; font-size:xx-small">
 {log}
 </textarea>
+<br/>
 <p>pedal: {pedal}</p>
 <!-- This keyboard has following properties (x=octave width).
      1. All white keys have equal width in front (W=x/7).
