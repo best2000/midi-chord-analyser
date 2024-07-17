@@ -2,7 +2,7 @@
     import "../styles.css";
     import { WebMidi } from "webmidi";
     import { removeSameElementFromSet } from "../lib/index"
-    import { Note, Interval } from "tonal";
+    import { Midi, Interval, Chord } from "tonal";
 
     let log_midi, log_var;
     log_midi = log_var = ""
@@ -32,16 +32,16 @@
         let notes = Array.from(new Set([...noteOn,...noteSustain]))
         notes.sort()
         chordNotes = notes
-        switch (notes.length) {
-            case 1:
-                chord = `${Note.fromMidi(notes[0], { pitchClass: true })}` 
-                break
-            case 2:
-                chord = `${Note.fromMidi(notes[0], { pitchClass: true })} ${Interval.fromSemitones(notes[1]-notes[0])}`;
-                break
-            default:
+        if (notes.length == 1) {
+            chord = `${Midi.midiToNoteName(notes[0], { pitchClass: true })}` 
+        } else if (notes.length == 2) {
+            chord = `${Midi.midiToNoteName(notes[0], { pitchClass: true })} ${Interval.fromSemitones(notes[1]-notes[0])}`;
+        } else {
+            let chordArr = Chord.detect(notes.map((n)=> Midi.midiToNoteName(n)), { assumePerfectFifth: true })
+            chord = chordArr.join("|")
+            if (chordArr.length == 0) {
                 chord = "?"
-                break
+            }
         }
     }
 
@@ -50,7 +50,6 @@
         const midiInput = WebMidi.getInputByName(selectedMidiInput);
         midiInput.addListener("noteon", (e) => {
             noteOn.add(e.note.number)
-            console.log(noteOn)
             calulateChord()
             
             log_midi+= `note on  : ${e.note.name}${e.note.octave} : ${e.message.statusByte.toString(2)} : ${e.note.number}\n`;
@@ -78,7 +77,6 @@
             log_var+=`on[${Array.from(noteOn)}] : sustain[${Array.from(noteSustain)}] : chord[${chordNotes}]\n`
                 
             let key = document.getElementById(e.note.number)
-            // console.log(key.className.baseVal)
             if (key.className.baseVal == "white-key") 
                 key.style["fill"] = "white"
             else 
