@@ -2,6 +2,7 @@
     import "../styles.css";
     import { WebMidi } from "webmidi";
     import { removeSameElementFromSet } from "../lib/index"
+    import { Note, Interval } from "tonal";
 
     let log_midi, log_var;
     log_midi = log_var = ""
@@ -13,7 +14,7 @@
     let pedal = false;
     $: if (pedal) console.log("pedal: "+pedal)
     let chordNotes = []
-    let chord = ""
+    let chord = "?"
 
     WebMidi.enable()
         .then(onEnabled)
@@ -24,6 +25,23 @@
         if (midiInputs.length != 0) {
             selectedMidiInput = midiInputs[0].name;
             listenMidiInput();
+        }
+    }
+
+    function calulateChord() {
+        let notes = Array.from(new Set([...noteOn,...noteSustain]))
+        notes.sort()
+        chordNotes = notes
+        switch (notes.length) {
+            case 1:
+                chord = `${Note.fromMidi(notes[0], { pitchClass: true })}` 
+                break
+            case 2:
+                chord = `${Note.fromMidi(notes[0], { pitchClass: true })} ${Interval.fromSemitones(notes[1]-notes[0])}`;
+                break
+            default:
+                chord = "?"
+                break
         }
     }
 
@@ -110,13 +128,6 @@
         WebMidi.inputs.forEach((input) => {
             console.log(input.manufacturer, input.name);
         });
-    }
-
-    function calulateChord() {
-        let notes = Array.from(new Set([...noteOn,...noteSustain]))
-        notes.sort()
-        chordNotes = notes
-        chord = "<chord_name>"
     }
     
 </script>
