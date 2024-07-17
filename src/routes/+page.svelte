@@ -38,7 +38,7 @@
             log_midi+= `note on  : ${e.note.name}${e.note.octave} : ${e.message.statusByte.toString(2)} : ${e.note.number}\n`;
             log_var+=`on[${Array.from(noteOn)}] : sustain[${Array.from(noteSustain)}] : chord[${chordNotes}]\n`
                 
-            document.getElementById(e.note.name+e.note.number).style["fill"] = "red"
+            document.getElementById(e.note.number).style["fill"] = "red"
 
             let logMidiTextArea = document.getElementById("log_midi");
             if (logMidiTextArea.selectionStart == logMidiTextArea.selectionEnd) {
@@ -59,7 +59,7 @@
             log_midi += `note off : ${e.note.name}${e.note.octave} : ${e.message.statusByte.toString(2)} : ${e.note.number}\n`;
             log_var+=`on[${Array.from(noteOn)}] : sustain[${Array.from(noteSustain)}] : chord[${chordNotes}]\n`
                 
-            let key = document.getElementById(e.note.name+e.note.number)
+            let key = document.getElementById(e.note.number)
             // console.log(key.className.baseVal)
             if (key.className.baseVal == "white-key") 
                 key.style["fill"] = "white"
@@ -138,10 +138,10 @@
 </select>
 <button on:focus={clear}>clear</button>
 <br/>
-<textarea id="log_midi" style="width: 25%; height:200px; font-size:xx-small">
+<textarea id="log_midi" style="width: 20%; height:200px; font-size:xx-small">
 {log_midi}
 </textarea>
-<textarea id="log_var" style="width: 70%; height:200px; font-size:xx-small">
+<textarea id="log_var" style="width: 75%; height:200px; font-size:xx-small">
 {log_var}
 </textarea>
 <br/>
@@ -153,19 +153,19 @@
      4. The narrow part of white keys F, G, A, and B is W - B*3/4 -->
      <svg xml:space="preserve" width="100%" height="125">
         <!--  White keys   -->
-        <rect id="C60" class="white-key"  x="0" y="0" width="23" height="120"/>
-        <rect id="D62" class="white-key"  x="23" y="0" width="23" height="120"/>
-        <rect id="E64" class="white-key"  x="46" y="0" width="23" height="120"/>
-        <rect id="F65" class="white-key"  x="69" y="0" width="23" height="120"/>
-        <rect id="G67" class="white-key"  x="92" y="0" width="23" height="120"/>
-        <rect id="A69" class="white-key"  x="115" y="0" width="23" height="120"/>
-        <rect id="B71" class="white-key"  x="138" y="0" width="23" height="120"/>
+        <rect id=60 class="white-key"  x="0" y="0" width="23" height="120"/>
+        <rect id=62 class="white-key"  x="23" y="0" width="23" height="120"/>
+        <rect id=64 class="white-key"  x="46" y="0" width="23" height="120"/>
+        <rect id=65 class="white-key"  x="69" y="0" width="23" height="120"/>
+        <rect id=67 class="white-key"  x="92" y="0" width="23" height="120"/>
+        <rect id=69 class="white-key"  x="115" y="0" width="23" height="120"/>
+        <rect id=71 class="white-key"  x="138" y="0" width="23" height="120"/>
         <!--  Black keys (overlap with the white keys)  -->
-        <rect id="C61" class="black-key"  x="14.33333" y="0" width="13" height="80"/>
-        <rect id="D63" class="black-key"  x="41.66666" y="0" width="13" height="80"/>
-        <rect id="F66" class="black-key"  x="82.25" y="0" width="13" height="80"/>
-        <rect id="G68" class="black-key"  x="108.25" y="0" width="13" height="80"/>
-        <rect id="A70" class="black-key"  x="134.75" y="0" width="13" height="80"/>
+        <rect id=61 class="black-key"  x="14.33333" y="0" width="13" height="80"/>
+        <rect id=63 class="black-key"  x="41.66666" y="0" width="13" height="80"/>
+        <rect id=66 class="black-key"  x="82.25" y="0" width="13" height="80"/>
+        <rect id=68 class="black-key"  x="108.25" y="0" width="13" height="80"/>
+        <rect id=70 class="black-key"  x="134.75" y="0" width="13" height="80"/>
     </svg>
 
 
