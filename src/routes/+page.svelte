@@ -1,10 +1,16 @@
 <script>
     import "../styles.css";
     import { WebMidi } from "webmidi";
+    import { removeSameElementFromSet } from "../lib/index"
 
     let log = "";
     let midiInputs = [];
     let selectedMidiInput = "";
+    $: if (selectedMidiInput) console.log("selectedMidiInput: "+selectedMidiInput)
+    let noteOn = new Set([]);
+    let noteOff = new Set([]);
+    let pedal = false;
+    $: if (pedal) console.log("pedal: "+pedal)
 
     WebMidi.enable()
         .then(onEnabled)
@@ -23,11 +29,15 @@
         //listen to all midi channels
         const midiInput = WebMidi.getInputByName(selectedMidiInput);
         midiInput.addListener("noteon", (e) => {
-            document.getElementById(e.note.name+e.note.number).style["fill"] = "red"
-
-            let message = `note on: ${e.note.name}${e.note.octave} ${e.note.number}`;
+            noteOn.add(e.note.number)
+            console.log(noteOn)
+            
+            let message = `note on  : ${e.note.name}${e.note.octave} : ${e.message.statusByte.toString(2)} : ${e.note.number}\n`;
             console.log(message);
-            log += message + "\n";
+            log += message
+            log+=`on       : [${Array.from(noteOn)}]\nsustain  : [${Array.from(noteOff)}]\n`
+
+            document.getElementById(e.note.name+e.note.number).style["fill"] = "red"
 
             let logTextArea = document.getElementById("log");
             if (logTextArea.selectionStart == logTextArea.selectionEnd) {
@@ -35,19 +45,27 @@
             }
         });
         midiInput.addListener("noteoff", (e) => {
-            let key = document.getElementById(e.note.name+e.note.number)
-            console.log(key.className.baseVal)
-            if (key.className.baseVal == "white-key") {
-                key.style["fill"] = "white"
+            if (pedal == false) {
+                noteOn.delete(e.note.number) 
+                console.log(noteOn)
             }
             else {
-                key.style["fill"] = "black"
-            } 
-                            
-            let message = `note on: ${e.note.name}${e.note.octave} ${e.note.number}`;
-            console.log(message);
-            log += message + "\n";
+                noteOff.add(e.note.number)
+                console.log(noteOff)
+            }
 
+            let message = `note off : ${e.note.name}${e.note.octave} : ${e.message.statusByte.toString(2)} : ${e.note.number}\n`;
+            console.log(message);
+            log += message;
+            log+=`on       : [${Array.from(noteOn)}]\nsustain  : [${Array.from(noteOff)}]\n`
+
+            let key = document.getElementById(e.note.name+e.note.number)
+            console.log(key.className.baseVal)
+            if (key.className.baseVal == "white-key") 
+                key.style["fill"] = "white"
+            else 
+                key.style["fill"] = "black"
+            
             let logTextArea = document.getElementById("log");
             if (logTextArea.selectionStart == logTextArea.selectionEnd) {
                 logTextArea.scrollTop = logTextArea.scrollHeight;
@@ -56,14 +74,19 @@
         midiInput.addListener("controlchange", (e) => {
             if (e.subtype == "damperpedal") {
                 if (e.value) {
-                    let message = `pedal on`;
+                    pedal = true
+                    let message = `pedal on\n`;
                     console.log(message);
-                    log += message + "\n";
+                    log += message;
                 } else {
-                    let message = `pedal off`;
+                    pedal = false
+                    removeSameElementFromSet(noteOn,noteOff)
+                    noteOff.clear()
+                    let message = `pedal off\n`;
                     console.log(message);
-                    log += message + "\n";
+                    log += message;
                 }
+                log+=`on       : [${Array.from(noteOn)}]\nsustain  : [${Array.from(noteOff)}]\n`
                 
                 let logTextArea = document.getElementById("log");
                 if (logTextArea.selectionStart == logTextArea.selectionEnd) {
@@ -71,6 +94,9 @@
                 }
             }
         });
+    }
+    function clear() {
+        log = ""
     }
 
     function updateMidiInputs() {
@@ -97,10 +123,11 @@
         <option>{input.name}</option>
     {/each}
 </select>
-<button on:focus={log = ""}>clear</button>
-<textarea id="log" style="width: 100%; height:200px; font-size:xx-small">
-    {log}
+<button on:focus={clear}>clear</button>
+<textarea id="log" style="width: 200px; height:200px; font-size:xx-small">
+{log}
 </textarea>
+<p>pedal: {pedal}</p>
 <!-- This keyboard has following properties (x=octave width).
      1. All white keys have equal width in front (W=x/7).
      2. All black keys have equal width (B=x/12).
