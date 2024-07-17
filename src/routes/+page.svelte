@@ -142,10 +142,7 @@
     }
 </script>
 
-<div>
-    <h1>MIDI Chord Analyser</h1>
-    <h2>{chord}</h2>
-</div>
+
 <label for="midi_input">MIDI Input:</label>
 <select
     name="midi_input"
@@ -166,7 +163,10 @@
 {log_var}
 </textarea>
 <br />
-<p>pedal: {pedal}</p>
+<div class="display">
+    <h1>{chord}</h1>
+</div>
+<div>pedal: {pedal}</div>
 <div class="piano-container">
     <ul class="piano-keys-list">
         <li class="piano-keys white-key" id=21></li>
