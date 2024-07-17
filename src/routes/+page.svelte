@@ -3,7 +3,8 @@
     import { WebMidi } from "webmidi";
     import { removeSameElementFromSet } from "../lib/index"
 
-    let log = "";
+    let log_midi, log_var;
+    log_midi = log_var = ""
     let midiInputs = [];
     let selectedMidiInput = "";
     $: if (selectedMidiInput) console.log("selectedMidiInput: "+selectedMidiInput)
@@ -11,13 +12,14 @@
     let noteSustain = new Set([]);
     let pedal = false;
     $: if (pedal) console.log("pedal: "+pedal)
+    let chordNotes = []
+    let chord = ""
 
     WebMidi.enable()
         .then(onEnabled)
         .catch((err) => (log += err));
 
     function onEnabled() {
-        console.log("midi inputs: " + WebMidi.inputs.length);
         midiInputs = WebMidi.inputs;
         if (midiInputs.length != 0) {
             selectedMidiInput = midiInputs[0].name;
@@ -31,17 +33,20 @@
         midiInput.addListener("noteon", (e) => {
             noteOn.add(e.note.number)
             console.log(noteOn)
+            calulateChord()
             
-            let message = `note on  : ${e.note.name}${e.note.octave} : ${e.message.statusByte.toString(2)} : ${e.note.number}\n`;
-            console.log(message);
-            log += message
-            log+=`on       : [${Array.from(noteOn)}]\nsustain  : [${Array.from(noteSustain)}]\n`
-
+            log_midi+= `note on  : ${e.note.name}${e.note.octave} : ${e.message.statusByte.toString(2)} : ${e.note.number}\n`;
+            log_var+=`on[${Array.from(noteOn)}] : sustain[${Array.from(noteSustain)}] : chord[${chordNotes}]\n`
+                
             document.getElementById(e.note.name+e.note.number).style["fill"] = "red"
 
-            let logTextArea = document.getElementById("log");
-            if (logTextArea.selectionStart == logTextArea.selectionEnd) {
-                logTextArea.scrollTop = logTextArea.scrollHeight;
+            let logMidiTextArea = document.getElementById("log_midi");
+            if (logMidiTextArea.selectionStart == logMidiTextArea.selectionEnd) {
+                logMidiTextArea.scrollTop = logMidiTextArea.scrollHeight;
+            }
+            let logVarTextArea = document.getElementById("log_var");
+            if (logVarTextArea.selectionStart == logVarTextArea.selectionEnd) {
+                logVarTextArea.scrollTop = logVarTextArea.scrollHeight;
             }
         });
         midiInput.addListener("noteoff", (e) => {
@@ -49,64 +54,76 @@
             if (pedal) {
                 noteSustain.add(e.note.number)
             }
+            calulateChord()
 
-            let message = `note off : ${e.note.name}${e.note.octave} : ${e.message.statusByte.toString(2)} : ${e.note.number}\n`;
-            console.log(message);
-            log += message;
-            log+=`on       : [${Array.from(noteOn)}]\nsustain  : [${Array.from(noteSustain)}]\n`
-
+            log_midi += `note off : ${e.note.name}${e.note.octave} : ${e.message.statusByte.toString(2)} : ${e.note.number}\n`;
+            log_var+=`on[${Array.from(noteOn)}] : sustain[${Array.from(noteSustain)}] : chord[${chordNotes}]\n`
+                
             let key = document.getElementById(e.note.name+e.note.number)
-            console.log(key.className.baseVal)
+            // console.log(key.className.baseVal)
             if (key.className.baseVal == "white-key") 
                 key.style["fill"] = "white"
             else 
                 key.style["fill"] = "black"
             
-            let logTextArea = document.getElementById("log");
-            if (logTextArea.selectionStart == logTextArea.selectionEnd) {
-                logTextArea.scrollTop = logTextArea.scrollHeight;
+            let logMidiTextArea = document.getElementById("log_midi");
+            if (logMidiTextArea.selectionStart == logMidiTextArea.selectionEnd) {
+                logMidiTextArea.scrollTop = logMidiTextArea.scrollHeight;
+            }
+            let logVarTextArea = document.getElementById("log_var");
+            if (logVarTextArea.selectionStart == logVarTextArea.selectionEnd) {
+                logVarTextArea.scrollTop = logVarTextArea.scrollHeight;
             }
         });
         midiInput.addListener("controlchange", (e) => {
             if (e.subtype == "damperpedal") {
                 if (e.value) {
                     pedal = true
-                    let message = `pedal on\n`;
-                    console.log(message);
-                    log += message;
+                    log_midi += `pedal on\n`;
                 } else {
                     pedal = false
                     removeSameElementFromSet(noteOn,noteSustain)
                     noteSustain.clear()
-                    let message = `pedal off\n`;
-                    console.log(message);
-                    log += message;
+                    log_midi += `pedal off\n`;
                 }
-                log+=`on       : [${Array.from(noteOn)}]\nsustain  : [${Array.from(noteSustain)}]\n`
+                calulateChord()
+                log_var+=`on[${Array.from(noteOn)}] : sustain[${Array.from(noteSustain)}] : chord[${chordNotes}]\n`
                 
-                let logTextArea = document.getElementById("log");
-                if (logTextArea.selectionStart == logTextArea.selectionEnd) {
-                    logTextArea.scrollTop = logTextArea.scrollHeight;
+                let logMidiTextArea = document.getElementById("log_midi");
+                if (logMidiTextArea.selectionStart == logMidiTextArea.selectionEnd) {
+                    logMidiTextArea.scrollTop = logMidiTextArea.scrollHeight;
+                }
+                let logVarTextArea = document.getElementById("log_var");
+                if (logVarTextArea.selectionStart == logVarTextArea.selectionEnd) {
+                    logVarTextArea.scrollTop = logVarTextArea.scrollHeight;
                 }
             }
         });
     }
     function clear() {
-        log = ""
+        log_midi = ""
+        log_var = ""
     }
 
     function updateMidiInputs() {
         midiInputs = WebMidi.inputs;
-        console.log("midi inputs: " + WebMidi.inputs.length);
         WebMidi.inputs.forEach((input) => {
             console.log(input.manufacturer, input.name);
         });
+    }
+
+    function calulateChord() {
+        let notes = Array.from(new Set([...noteOn,...noteSustain]))
+        notes.sort()
+        chordNotes = notes
+        chord = "<chord_name>"
     }
     
 </script>
 
 <div>
     <h1>MIDI Chord Analyser</h1>
+    <h2>{chord}</h2>
 </div>
 <label for="midi_input">MIDI Input:</label>
 <select
@@ -121,8 +138,11 @@
 </select>
 <button on:focus={clear}>clear</button>
 <br/>
-<textarea id="log" style="width: 200px; height:200px; font-size:xx-small">
-{log}
+<textarea id="log_midi" style="width: 25%; height:200px; font-size:xx-small">
+{log_midi}
+</textarea>
+<textarea id="log_var" style="width: 70%; height:200px; font-size:xx-small">
+{log_var}
 </textarea>
 <br/>
 <p>pedal: {pedal}</p>
