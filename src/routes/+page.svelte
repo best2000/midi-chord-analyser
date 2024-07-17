@@ -1,7 +1,6 @@
 <script>
     import "../styles.css";
     import { WebMidi } from "webmidi";
-    import { removeSameElementFromSet } from "../lib/index";
     import { Midi, Interval, Chord } from "tonal";
 
     let log_midi, log_var;
@@ -59,7 +58,8 @@
             log_midi += `note on  : ${e.note.name}${e.note.octave} : ${e.message.statusByte.toString(2)} : ${e.note.number}\n`;
             log_var += `on[${Array.from(noteOn)}] : sustain[${Array.from(noteSustain)}] : chord[${chordNotes}]\n`;
 
-            document.getElementById(e.note.number).style["background-color"] = "red";
+            document.getElementById(e.note.number).style["background-color"] =
+                "red";
 
             let logMidiTextArea = document.getElementById("log_midi");
             if (
@@ -76,8 +76,7 @@
             noteOn.delete(e.note.number);
             if (pedal) {
                 noteSustain.add(e.note.number);
-            }
-            else {
+            } else {
                 let key = document.getElementById(e.note.number);
                 if (key.className == "piano-keys white-key")
                     key.style["background-color"] = "white";
@@ -106,7 +105,13 @@
                     log_midi += `pedal on\n`;
                 } else {
                     pedal = false;
-                    removeSameElementFromSet(noteOn, noteSustain);
+                    noteSustain.forEach((n) => {
+                        noteOn.delete(n);
+                        let key = document.getElementById(n);
+                        if (key.className == "piano-keys white-key")
+                            key.style["background-color"] = "white";
+                        else key.style["background-color"] = "black";
+                    });
                     noteSustain.clear();
                     log_midi += `pedal off\n`;
                 }
@@ -142,7 +147,6 @@
     }
 </script>
 
-
 <label for="midi_input">MIDI Input:</label>
 <select
     name="midi_input"
@@ -156,106 +160,106 @@
 </select>
 <button on:focus={clear}>clear</button>
 <br />
-<textarea id="log_midi" style="width: 20%; height:200px; font-size:xx-small">
+<textarea id="log_midi" class="log" style="width: 30%; height:200px;" readonly>
 {log_midi}
 </textarea>
-<textarea id="log_var" style="width: 75%; height:200px; font-size:xx-small">
+<textarea id="log_var" class="log" style="width: 65%; height:200px;" readonly>
 {log_var}
 </textarea>
 <br />
 <div class="display">
-    <h1>{chord}</h1>
+    <h1 style="font-size:75px;">{chord}</h1>
 </div>
 <div>pedal: {pedal}</div>
 <div class="piano-container">
     <ul class="piano-keys-list">
-        <li class="piano-keys white-key" id=21></li>
-        <li class="piano-keys black-key" id=22></li>
-        <li class="piano-keys white-key" id=23></li>
-        <li class="piano-keys white-key" id=24></li>
-        <li class="piano-keys black-key" id=25></li>
-        <li class="piano-keys white-key" id=26></li>
-        <li class="piano-keys black-key" id=27></li>
-        <li class="piano-keys white-key" id=28></li>
-        <li class="piano-keys white-key" id=29></li>
-        <li class="piano-keys black-key" id=30></li>
-        <li class="piano-keys white-key" id=31></li>
-        <li class="piano-keys black-key" id=32></li>
-        <li class="piano-keys white-key" id=33></li>
-        <li class="piano-keys black-key" id=34></li>
-        <li class="piano-keys white-key" id=35></li>
-        <li class="piano-keys white-key" id=36></li>
-        <li class="piano-keys black-key" id=37></li>
-        <li class="piano-keys white-key" id=38></li>
-        <li class="piano-keys black-key" id=39></li>
-        <li class="piano-keys white-key" id=40></li>
-        <li class="piano-keys white-key" id=41></li>
-        <li class="piano-keys black-key" id=42></li>
-        <li class="piano-keys white-key" id=43></li>
-        <li class="piano-keys black-key" id=44></li>
-        <li class="piano-keys white-key" id=45></li>
-        <li class="piano-keys black-key" id=46></li>
-        <li class="piano-keys white-key" id=47></li>
-        <li class="piano-keys white-key" id=48></li>
-        <li class="piano-keys black-key" id=49></li>
-        <li class="piano-keys white-key" id=50></li>
-        <li class="piano-keys black-key" id=51></li>
-        <li class="piano-keys white-key" id=52></li>
-        <li class="piano-keys white-key" id=53></li>
-        <li class="piano-keys black-key" id=54></li>
-        <li class="piano-keys white-key" id=55></li>
-        <li class="piano-keys black-key" id=56></li>
-        <li class="piano-keys white-key" id=57></li>
-        <li class="piano-keys black-key" id=58></li>
-        <li class="piano-keys white-key" id=59></li>
-        <li class="piano-keys white-key" id=60></li>
-        <li class="piano-keys black-key" id=61></li>
-        <li class="piano-keys white-key" id=62></li>
-        <li class="piano-keys black-key" id=63></li>
-        <li class="piano-keys white-key" id=64></li>
-        <li class="piano-keys white-key" id=65></li>
-        <li class="piano-keys black-key" id=66></li>
-        <li class="piano-keys white-key" id=67></li>
-        <li class="piano-keys black-key" id=68></li>
-        <li class="piano-keys white-key" id=69></li>
-        <li class="piano-keys black-key" id=70></li>
-        <li class="piano-keys white-key" id=71></li>
-        <li class="piano-keys white-key" id=72></li>
-        <li class="piano-keys black-key" id=73></li>
-        <li class="piano-keys white-key" id=74></li>
-        <li class="piano-keys black-key" id=75></li>
-        <li class="piano-keys white-key" id=76></li>
-        <li class="piano-keys white-key" id=77></li>
-        <li class="piano-keys black-key" id=78></li>
-        <li class="piano-keys white-key" id=79></li>
-        <li class="piano-keys black-key" id=80></li>
-        <li class="piano-keys white-key" id=81></li>
-        <li class="piano-keys black-key" id=82></li>
-        <li class="piano-keys white-key" id=83></li>
-        <li class="piano-keys white-key" id=84></li>
-        <li class="piano-keys black-key" id=85></li>
-        <li class="piano-keys white-key" id=86></li>
-        <li class="piano-keys black-key" id=87></li>
-        <li class="piano-keys white-key" id=88></li>
-        <li class="piano-keys white-key" id=89></li>
-        <li class="piano-keys black-key" id=90></li>
-        <li class="piano-keys white-key" id=91></li>
-        <li class="piano-keys black-key" id=92></li>
-        <li class="piano-keys white-key" id=93></li>
-        <li class="piano-keys black-key" id=94></li>
-        <li class="piano-keys white-key" id=95></li>
-        <li class="piano-keys white-key" id=96></li>
-        <li class="piano-keys black-key" id=97></li>
-        <li class="piano-keys white-key" id=98></li>
-        <li class="piano-keys black-key" id=99></li>
-        <li class="piano-keys white-key" id=100></li>
-        <li class="piano-keys white-key" id=101></li>
-        <li class="piano-keys black-key" id=102></li>
-        <li class="piano-keys white-key" id=103></li>
-        <li class="piano-keys black-key" id=104></li>
-        <li class="piano-keys white-key" id=105></li>
-        <li class="piano-keys black-key" id=106></li>
-        <li class="piano-keys white-key" id=107></li>
-        <li class="piano-keys white-key" id=108></li>
+        <li class="piano-keys white-key" id="21"></li>
+        <li class="piano-keys black-key" id="22"></li>
+        <li class="piano-keys white-key" id="23"></li>
+        <li class="piano-keys white-key" id="24"></li>
+        <li class="piano-keys black-key" id="25"></li>
+        <li class="piano-keys white-key" id="26"></li>
+        <li class="piano-keys black-key" id="27"></li>
+        <li class="piano-keys white-key" id="28"></li>
+        <li class="piano-keys white-key" id="29"></li>
+        <li class="piano-keys black-key" id="30"></li>
+        <li class="piano-keys white-key" id="31"></li>
+        <li class="piano-keys black-key" id="32"></li>
+        <li class="piano-keys white-key" id="33"></li>
+        <li class="piano-keys black-key" id="34"></li>
+        <li class="piano-keys white-key" id="35"></li>
+        <li class="piano-keys white-key" id="36"></li>
+        <li class="piano-keys black-key" id="37"></li>
+        <li class="piano-keys white-key" id="38"></li>
+        <li class="piano-keys black-key" id="39"></li>
+        <li class="piano-keys white-key" id="40"></li>
+        <li class="piano-keys white-key" id="41"></li>
+        <li class="piano-keys black-key" id="42"></li>
+        <li class="piano-keys white-key" id="43"></li>
+        <li class="piano-keys black-key" id="44"></li>
+        <li class="piano-keys white-key" id="45"></li>
+        <li class="piano-keys black-key" id="46"></li>
+        <li class="piano-keys white-key" id="47"></li>
+        <li class="piano-keys white-key" id="48"></li>
+        <li class="piano-keys black-key" id="49"></li>
+        <li class="piano-keys white-key" id="50"></li>
+        <li class="piano-keys black-key" id="51"></li>
+        <li class="piano-keys white-key" id="52"></li>
+        <li class="piano-keys white-key" id="53"></li>
+        <li class="piano-keys black-key" id="54"></li>
+        <li class="piano-keys white-key" id="55"></li>
+        <li class="piano-keys black-key" id="56"></li>
+        <li class="piano-keys white-key" id="57"></li>
+        <li class="piano-keys black-key" id="58"></li>
+        <li class="piano-keys white-key" id="59"></li>
+        <li class="piano-keys white-key" id="60"></li>
+        <li class="piano-keys black-key" id="61"></li>
+        <li class="piano-keys white-key" id="62"></li>
+        <li class="piano-keys black-key" id="63"></li>
+        <li class="piano-keys white-key" id="64"></li>
+        <li class="piano-keys white-key" id="65"></li>
+        <li class="piano-keys black-key" id="66"></li>
+        <li class="piano-keys white-key" id="67"></li>
+        <li class="piano-keys black-key" id="68"></li>
+        <li class="piano-keys white-key" id="69"></li>
+        <li class="piano-keys black-key" id="70"></li>
+        <li class="piano-keys white-key" id="71"></li>
+        <li class="piano-keys white-key" id="72"></li>
+        <li class="piano-keys black-key" id="73"></li>
+        <li class="piano-keys white-key" id="74"></li>
+        <li class="piano-keys black-key" id="75"></li>
+        <li class="piano-keys white-key" id="76"></li>
+        <li class="piano-keys white-key" id="77"></li>
+        <li class="piano-keys black-key" id="78"></li>
+        <li class="piano-keys white-key" id="79"></li>
+        <li class="piano-keys black-key" id="80"></li>
+        <li class="piano-keys white-key" id="81"></li>
+        <li class="piano-keys black-key" id="82"></li>
+        <li class="piano-keys white-key" id="83"></li>
+        <li class="piano-keys white-key" id="84"></li>
+        <li class="piano-keys black-key" id="85"></li>
+        <li class="piano-keys white-key" id="86"></li>
+        <li class="piano-keys black-key" id="87"></li>
+        <li class="piano-keys white-key" id="88"></li>
+        <li class="piano-keys white-key" id="89"></li>
+        <li class="piano-keys black-key" id="90"></li>
+        <li class="piano-keys white-key" id="91"></li>
+        <li class="piano-keys black-key" id="92"></li>
+        <li class="piano-keys white-key" id="93"></li>
+        <li class="piano-keys black-key" id="94"></li>
+        <li class="piano-keys white-key" id="95"></li>
+        <li class="piano-keys white-key" id="96"></li>
+        <li class="piano-keys black-key" id="97"></li>
+        <li class="piano-keys white-key" id="98"></li>
+        <li class="piano-keys black-key" id="99"></li>
+        <li class="piano-keys white-key" id="100"></li>
+        <li class="piano-keys white-key" id="101"></li>
+        <li class="piano-keys black-key" id="102"></li>
+        <li class="piano-keys white-key" id="103"></li>
+        <li class="piano-keys black-key" id="104"></li>
+        <li class="piano-keys white-key" id="105"></li>
+        <li class="piano-keys black-key" id="106"></li>
+        <li class="piano-keys white-key" id="107"></li>
+        <li class="piano-keys white-key" id="108"></li>
     </ul>
 </div>
