@@ -8,7 +8,7 @@
     let selectedMidiInput = "";
     $: if (selectedMidiInput) console.log("selectedMidiInput: "+selectedMidiInput)
     let noteOn = new Set([]);
-    let noteOff = new Set([]);
+    let noteSustain = new Set([]);
     let pedal = false;
     $: if (pedal) console.log("pedal: "+pedal)
 
@@ -35,7 +35,7 @@
             let message = `note on  : ${e.note.name}${e.note.octave} : ${e.message.statusByte.toString(2)} : ${e.note.number}\n`;
             console.log(message);
             log += message
-            log+=`on       : [${Array.from(noteOn)}]\nsustain  : [${Array.from(noteOff)}]\n`
+            log+=`on       : [${Array.from(noteOn)}]\nsustain  : [${Array.from(noteSustain)}]\n`
 
             document.getElementById(e.note.name+e.note.number).style["fill"] = "red"
 
@@ -45,19 +45,15 @@
             }
         });
         midiInput.addListener("noteoff", (e) => {
-            if (pedal == false) {
-                noteOn.delete(e.note.number) 
-                console.log(noteOn)
-            }
-            else {
-                noteOff.add(e.note.number)
-                console.log(noteOff)
+            noteOn.delete(e.note.number) 
+            if (pedal) {
+                noteSustain.add(e.note.number)
             }
 
             let message = `note off : ${e.note.name}${e.note.octave} : ${e.message.statusByte.toString(2)} : ${e.note.number}\n`;
             console.log(message);
             log += message;
-            log+=`on       : [${Array.from(noteOn)}]\nsustain  : [${Array.from(noteOff)}]\n`
+            log+=`on       : [${Array.from(noteOn)}]\nsustain  : [${Array.from(noteSustain)}]\n`
 
             let key = document.getElementById(e.note.name+e.note.number)
             console.log(key.className.baseVal)
@@ -80,13 +76,13 @@
                     log += message;
                 } else {
                     pedal = false
-                    removeSameElementFromSet(noteOn,noteOff)
-                    noteOff.clear()
+                    removeSameElementFromSet(noteOn,noteSustain)
+                    noteSustain.clear()
                     let message = `pedal off\n`;
                     console.log(message);
                     log += message;
                 }
-                log+=`on       : [${Array.from(noteOn)}]\nsustain  : [${Array.from(noteOff)}]\n`
+                log+=`on       : [${Array.from(noteOn)}]\nsustain  : [${Array.from(noteSustain)}]\n`
                 
                 let logTextArea = document.getElementById("log");
                 if (logTextArea.selectionStart == logTextArea.selectionEnd) {
