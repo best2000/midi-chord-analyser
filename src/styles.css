@@ -1,26 +1,30 @@
 .piano-container {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    /* align-items: center; */
+    /* justify-content: center; */
     overflow-x: scroll;
-    overflow-y: scroll;
+    /* overflow-y: scroll; */
+
 }
 .display {
     width: fit-content;
     height: fit-content;
     margin-inline: auto;
-    /* align-items: center; */
+    align-items: center;
     justify-content: center;
 }
  
 .log {
     background-color: rgb(246, 246, 246);
     font-size:xx-small;
+    /* min-height: ; */
+    /* max-height: ; */
 }
 
 .piano-keys-list {
     list-style: none;
     display: flex;
+    padding: 0;
     justify-content: center;
 }
  
