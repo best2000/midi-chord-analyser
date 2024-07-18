@@ -75,7 +75,7 @@
 
 .chord {
     /* border: 1px solid black; */
-    font-size: 7vw;
+    font-size: 8vw;
     overflow:hidden;
     font-family: "Quicksand", monospace;
     text-align: center;
@@ -83,7 +83,7 @@
 
 .note {
     /* border: 1px solid black; */
-    font-size: 3.5vw;
+    font-size: 4vw;
     overflow:hidden;
     font-family:"Quicksand", monospace;
     text-align: center;
