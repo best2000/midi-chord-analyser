@@ -14,7 +14,8 @@
     let pedal = false;
     $: if (pedal) console.log("pedal: " + pedal);
     let chordNotes = [];
-    let chord = "?";
+    let chordNotesText = "";
+    let chord = "";
 
     WebMidi.enable()
         .then(onEnabled)
@@ -32,20 +33,22 @@
         let notes = Array.from(new Set([...noteOn, ...noteSustain]));
         notes.sort();
         chordNotes = notes;
-        if (notes.length == 1) {
-            chord = `${Midi.midiToNoteName(notes[0], { pitchClass: true })}`;
-        } else if (notes.length == 2) {
+        if (notes.length == 2) {
             chord = `${Midi.midiToNoteName(notes[0], { pitchClass: true })} ${Interval.fromSemitones(notes[1] - notes[0])}`;
         } else {
             let chordArr = Chord.detect(
                 notes.map((n) => Midi.midiToNoteName(n)),
                 { assumePerfectFifth: true },
             );
-            chord = chordArr.join("|");
+            chord = chordArr.join(" ");
             if (chordArr.length == 0) {
-                chord = "?";
+                chord = "";
             }
         }
+        chordNotesText = ""
+        notes.forEach((n) => {
+            chordNotesText+=Midi.midiToNoteName(n, { pitchClass: true })+" "
+        })
     }
 
     function listenMidiInput() {
@@ -158,9 +161,8 @@
         <option>{input.name}</option>
     {/each}
 </select>
-<button on:focus={clear}>clear</button>
-<button on:focus={clear}>hide log</button>
-<hr/>
+<button on:focus={clear}>clear log</button>
+<!-- <button on:focus={clear}>hide log</button> -->
 <div class="log-container">
 <textarea id="log_midi" class="log" style="width: 39%; height:95%;" readonly>
 {log_midi}
@@ -169,9 +171,12 @@
 {log_var}
 </textarea>
 </div>
-<div class="chord-container">
-    <div class="chord" id="text">
+<div class="chord-note-container">
+    <div class="chord">
         {chord}
+    </div>
+    <div class="note">
+        {chordNotesText}
     </div>
 </div>
 <div class="piano-container">
