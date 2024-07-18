@@ -16,7 +16,7 @@
     let chordNotes = [];
     let chordNotesText = "";
     let chord = "";
-    let showLog = true;
+    let showLog = false;
     let autoP5 = true;
 
     WebMidi.enable()
@@ -171,11 +171,11 @@
 	<input type="checkbox" bind:checked={autoP5} />
 	AutoP5
 </label>
-<div class="log-container" style="display:{showLog ? "block": "none"}">
-<textarea id="log_midi" class="log" style="width: 39%; height:95%;" readonly>
+<div class="log-container" style="display:{showLog ? "flex": "none"}">
+<textarea id="log_midi" class="log" style="width: 38.5%; height:95%;" readonly>
 {log_midi}
 </textarea>
-<textarea id="log_var" class="log" style="width: 59%; height:95%;" readonly>
+<textarea id="log_var" class="log" style="width: 58.5%; height:95%;" readonly>
 {log_var}
 </textarea>
 </div>
