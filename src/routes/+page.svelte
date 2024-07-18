@@ -147,7 +147,7 @@
     }
 </script>
 
-<label for="midi_input">MIDI Input:</label>
+<label  for="midi_input">MIDI Input:</label>
 <select
     name="midi_input"
     bind:value={selectedMidiInput}
@@ -159,18 +159,21 @@
     {/each}
 </select>
 <button on:focus={clear}>clear</button>
-<br />
-<textarea id="log_midi" class="log" style="width: 30%; height:200px;" readonly>
+<button on:focus={clear}>hide log</button>
+<hr/>
+<div class="log-container">
+<textarea id="log_midi" class="log" style="width: 39%; height:95%;" readonly>
 {log_midi}
 </textarea>
-<textarea id="log_var" class="log" style="width: 65%; height:200px;" readonly>
+<textarea id="log_var" class="log" style="width: 59%; height:95%;" readonly>
 {log_var}
 </textarea>
-<br />
-<div class="display">
-    <h1 style="font-size:75px;">{chord}</h1>
 </div>
-<div>pedal: {pedal}</div>
+<div class="chord-container">
+    <div class="chord" id="text">
+        {chord}
+    </div>
+</div>
 <div class="piano-container">
     <ul class="piano-keys-list">
         <li class="piano-keys white-key" id="21"></li>
