@@ -14,8 +14,8 @@
     let pedal = false;
     $: if (pedal) console.log("pedal: " + pedal);
     let chordNotes = [];
-    let chordNotesText = "";
-    let chord = "";
+    let chordNotesText = "";
+    let chord = "";
     let showLog = true;
     let autoP5 = true;
 
@@ -44,10 +44,10 @@
             );
             chord = chordArr.join(" ");
             if (chordArr.length == 0) {
-                chord = "";
+                chord = "";
             }
         }
-        chordNotesText = ""
+        chordNotesText = ""
         notes.forEach((n) => {
             chordNotesText+=Midi.midiToNoteName(n, { pitchClass: true })+" "
         })
@@ -179,7 +179,7 @@
 {log_var}
 </textarea>
 </div>
-<div class="chord-note-container">
+<div class="chord-note-container" style="height: {showLog ? "fit-content" : "40vh"}">
     <div class="chord">
         {chord}
     </div>
