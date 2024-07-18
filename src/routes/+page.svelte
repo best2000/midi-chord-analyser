@@ -16,6 +16,8 @@
     let chordNotes = [];
     let chordNotesText = "";
     let chord = "";
+    let showLog = true;
+    let autoP5 = true;
 
     WebMidi.enable()
         .then(onEnabled)
@@ -38,7 +40,7 @@
         } else {
             let chordArr = Chord.detect(
                 notes.map((n) => Midi.midiToNoteName(n)),
-                { assumePerfectFifth: true },
+                { assumePerfectFifth: autoP5 },
             );
             chord = chordArr.join(" ");
             if (chordArr.length == 0) {
@@ -58,8 +60,8 @@
             noteOn.add(e.note.number);
             calulateChord();
 
-            log_midi += `note on  : ${e.note.name}${e.note.octave} : ${e.message.statusByte.toString(2)} : ${e.note.number}\n`;
-            log_var += `on[${Array.from(noteOn)}] : sustain[${Array.from(noteSustain)}] : chord[${chordNotes}]\n`;
+            log_midi += `note on  : ${e.note.name}${e.note.octave} : raw[${e.message.data.map(n => n).join(',')}]\n`;
+            log_var += `on[${Array.from(noteOn)}] : sustain[${Array.from(noteSustain)}] : chord[${chordNotes} ]\n`;
 
             document.getElementById(e.note.number).style["background-color"] =
                 "red";
@@ -87,7 +89,7 @@
             }
             calulateChord();
 
-            log_midi += `note off : ${e.note.name}${e.note.octave} : ${e.message.statusByte.toString(2)} : ${e.note.number}\n`;
+            log_midi += `note off : ${e.note.name}${e.note.octave} : raw[${e.message.data.map(n => n).join(',')}]\n`;
             log_var += `on[${Array.from(noteOn)}] : sustain[${Array.from(noteSustain)}] : chord[${chordNotes}]\n`;
 
             let logMidiTextArea = document.getElementById("log_midi");
@@ -105,7 +107,7 @@
             if (e.subtype == "damperpedal") {
                 if (e.value) {
                     pedal = true;
-                    log_midi += `pedal on\n`;
+                    log_midi += `pedal on      : raw[${e.message.data.map(n => n).join(',')}]\n`;
                 } else {
                     pedal = false;
                     noteSustain.forEach((n) => {
@@ -116,7 +118,7 @@
                         else key.style["background-color"] = "black";
                     });
                     noteSustain.clear();
-                    log_midi += `pedal off\n`;
+                    log_midi += `pedal off     : raw[${e.message.data.map(n => n).join(',')}]\n`;
                 }
                 calulateChord();
                 log_var += `on[${Array.from(noteOn)}] : sustain[${Array.from(noteSustain)}] : chord[${chordNotes}]\n`;
@@ -161,9 +163,15 @@
         <option>{input.name}</option>
     {/each}
 </select>
-<button on:focus={clear}>clear log</button>
-<!-- <button on:focus={clear}>hide log</button> -->
-<div class="log-container">
+<label>
+	<input type="checkbox" bind:checked={showLog}/>Log
+</label>
+<button on:click={clear} disabled={!showLog}> clear </button>
+<label>
+	<input type="checkbox" bind:checked={autoP5} />
+	AutoP5
+</label>
+<div class="log-container" style="display:{showLog ? "block": "none"}">
 <textarea id="log_midi" class="log" style="width: 39%; height:95%;" readonly>
 {log_midi}
 </textarea>

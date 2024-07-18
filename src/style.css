@@ -1,13 +1,11 @@
 .piano-container {
     display: flex;
     overflow-x: scroll;
-    margin-inline: auto;
     height: fit-content;
-    width: 100%;
+    width: 99%;
     height: fit-content;
-    justify-content: center;
-    position: relative;
-    bottom: 0;
+    position: absolute;
+    bottom: 0px;
 }
 
 .log {
@@ -21,7 +19,10 @@
     list-style: none;
     display: flex;
     padding: 0;
-    justify-content: center;
+    margin-inline: auto;
+    margin-bottom: 8px;
+    margin-top: 0px;
+
 }
 
 .piano-keys {
@@ -70,7 +71,7 @@
 
 .chord {
     /* border: 1px solid black; */
-    font-size: 8vw;
+    font-size: 7vw;
     overflow:hidden;
     font-family:monospace;
     text-align: center;
@@ -78,7 +79,7 @@
 
 .note {
     /* border: 1px solid black; */
-    font-size: 4vw;
+    font-size: 3.5vw;
     overflow:hidden;
     font-family:monospace;
     text-align: center;
