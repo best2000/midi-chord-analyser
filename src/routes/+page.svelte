@@ -36,7 +36,7 @@
         notes.sort();
         chordNotes = notes;
         if (notes.length == 2) {
-            chord = `${Midi.midiToNoteName(notes[0], { pitchClass: true })} ${Interval.fromSemitones(notes[1] - notes[0])}`;
+            chord = `${Midi.midiToNoteName(notes[0], { pitchClass: true })} ${Interval.simplify(Interval.fromSemitones(notes[1] - notes[0]))}`;
         } else {
             let chordArr = Chord.detect(
                 notes.map((n) => Midi.midiToNoteName(n)),
