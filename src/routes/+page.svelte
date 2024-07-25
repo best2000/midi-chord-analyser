@@ -111,11 +111,12 @@
                 } else {
                     pedal = false;
                     noteSustain.forEach((n) => {
-                        noteOn.delete(n);
                         let key = document.getElementById(n);
-                        if (key.className == "piano-keys white-key")
+                        if (!noteOn.has(n)) {
+                            if (key.className == "piano-keys white-key")
                             key.style["background-color"] = "white";
-                        else key.style["background-color"] = "black";
+                            else key.style["background-color"] = "black";
+                        }
                     });
                     noteSustain.clear();
                     log_midi += `pedal off     : raw[${e.message.data.map(n => n).join(',')}]\n`;
