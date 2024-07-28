@@ -1,5 +1,6 @@
 <script>
     import "../style.css";
+    import { onMount } from 'svelte';
     import { WebMidi } from "webmidi";
     import { Midi, Interval, Chord } from "tonal";
 
@@ -30,6 +31,13 @@
             listenMidiInput();
         }
     }
+
+    onMount(() => {
+    alert(`Instructions
+    1. Connect your MIDI device.
+    2. Select your input MIDI device (refresh if it doesn't show up).
+    3. Start playing notes (sustain pedal also supported).`);
+	});
 
     function calulateChord() {
         let notes = Array.from(new Set([...noteOn, ...noteSustain]));
